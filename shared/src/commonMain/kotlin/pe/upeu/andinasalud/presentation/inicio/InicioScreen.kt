@@ -13,7 +13,14 @@ import pe.upeu.andinasalud.domain.usecase.InicioDatos
 import pe.upeu.andinasalud.presentation.components.*
 
 @Composable
-fun InicioScreen(estado: UiState<InicioDatos>, reintentar: () -> Unit, verCitas: () -> Unit, solicitar: () -> Unit, detalle: (String) -> Unit) {
+fun InicioScreen(
+    estado: UiState<InicioDatos>, 
+    reintentar: () -> Unit, 
+    verCitas: () -> Unit, 
+    solicitar: () -> Unit, 
+    detalle: (String) -> Unit,
+    limiteAlcanzado: Boolean = false
+) {
     EstadoContenido(estado, reintentar, "No encontramos tu perfil") { datos ->
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(24.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
             item {
@@ -30,10 +37,14 @@ fun InicioScreen(estado: UiState<InicioDatos>, reintentar: () -> Unit, verCitas:
                 else CitaCard(proxima, { detalle(proxima.id) }, destacada = true)
             }
             item {
-                Button(onClick = solicitar, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) {
+                Button(
+                    onClick = solicitar, 
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp),
+                    enabled = !limiteAlcanzado
+                ) {
                     Icon(Icons.Outlined.Add, null)
                     Spacer(Modifier.width(8.dp))
-                    Text("Solicitar cita")
+                    Text(if (limiteAlcanzado) "Límite de citas alcanzado" else "Solicitar cita")
                 }
                 Spacer(Modifier.height(10.dp))
                 OutlinedButton(onClick = verCitas, modifier = Modifier.fillMaxWidth().heightIn(min = 52.dp)) { Text("Mis citas") }

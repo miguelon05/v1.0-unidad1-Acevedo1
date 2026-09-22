@@ -15,7 +15,15 @@ import pe.upeu.andinasalud.domain.usecase.FiltroEstado
 import pe.upeu.andinasalud.presentation.components.*
 
 @Composable
-fun CitasScreen(estado: CitasUiState, buscar: (String) -> Unit, filtrar: (FiltroEstado) -> Unit, reintentar: () -> Unit, detalle: (String) -> Unit, solicitar: () -> Unit) {
+fun CitasScreen(
+    estado: CitasUiState, 
+    buscar: (String) -> Unit, 
+    filtrar: (FiltroEstado) -> Unit, 
+    reintentar: () -> Unit, 
+    detalle: (String) -> Unit, 
+    solicitar: () -> Unit,
+    limiteAlcanzado: Boolean = false
+) {
     Column(Modifier.fillMaxSize()) {
         Column(Modifier.padding(horizontal = 24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedTextField(value = estado.busqueda, onValueChange = buscar, modifier = Modifier.fillMaxWidth(),
@@ -31,7 +39,13 @@ fun CitasScreen(estado: CitasUiState, buscar: (String) -> Unit, filtrar: (Filtro
                     FilterChip(selected = estado.filtro == filtro, onClick = { filtrar(filtro) }, label = { Text(label) })
                 }
             }
-            FilledTonalButton(onClick = solicitar, modifier = Modifier.fillMaxWidth()) { Text("Solicitar cita") }
+            FilledTonalButton(
+                onClick = solicitar, 
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !limiteAlcanzado
+            ) { 
+                Text(if (limiteAlcanzado) "Límite de citas alcanzado" else "Solicitar cita") 
+            }
         }
         Box(Modifier.weight(1f)) {
             EstadoContenido(estado.resultado, reintentar, "No encontramos citas", "Prueba otra búsqueda o cambia el filtro de estado.") { citas ->
