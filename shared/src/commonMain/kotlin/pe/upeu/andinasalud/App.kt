@@ -1,8 +1,12 @@
 package pe.upeu.andinasalud
 
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import pe.upeu.andinasalud.presentation.navigation.AppNavHost
+import pe.upeu.andinasalud.presentation.theme.AndinaSaludTheme
 
 @Composable
-fun App() { MaterialTheme { Text("AndinaSalud") } }
+fun App() {
+    var oscuro by rememberSaveable { mutableStateOf(false) }
+    AndinaSaludTheme(oscuro) { AppNavHost(oscuro, { oscuro = it }) }
+}
