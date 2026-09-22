@@ -20,7 +20,7 @@ val appModule = module {
     single<CitaRepository> { CitaRepositoryFake(get(), get()) }
     single { ReglasCita(get()) }
     single { CoordinadorCitas() }
-    factory { ObtenerCitasUseCase(get()) }
+    factory { ObtenerCitasUseCase(get(), get()) }
     factory { ObtenerPacienteUseCase(get()) }
     factory { ObtenerCatalogoUseCase(get()) }
     factory { ObtenerInicioUseCase(get(), get()) }
@@ -32,6 +32,7 @@ val appModule = module {
     viewModel { (id: String) -> DetalleCitaViewModel(id, get(), get()) }
     viewModel { SolicitudViewModel(get(), get()) }
     viewModel { PerfilViewModel(get()) }
+    viewModel { pe.upeu.andinasalud.presentation.navigation.AppViewModel(get()) }
 }
 
 fun initKoin(config: KoinAppDeclaration = {}) = startKoin {
