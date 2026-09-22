@@ -2,6 +2,7 @@ package pe.upeu.andinasalud.domain.usecase
 
 import pe.upeu.andinasalud.domain.model.*
 import pe.upeu.andinasalud.domain.repository.CitaRepository
+import kotlinx.datetime.toLocalDateTime
 
 enum class FiltroEstado { TODAS, PROGRAMADA, ATENDIDA, CANCELADA }
 
@@ -19,7 +20,10 @@ fun String.normalizarBusqueda(): String = lowercase().mapNotNull {
     }
 }.joinToString("").trim()
 
-class ObtenerCitasUseCase(private val repository: CitaRepository) {
+class ObtenerCitasUseCase(
+    private val repository: CitaRepository,
+    private val reloj: Reloj
+)  {
     val revision get() = repository.revision
 
     suspend operator fun invoke(filtro: FiltroEstado = FiltroEstado.TODAS, busqueda: String = ""): List<Cita> {
@@ -27,8 +31,14 @@ class ObtenerCitasUseCase(private val repository: CitaRepository) {
         return filtrar(repository.obtenerCitas().filter { it.pacienteId == paciente.id }, filtro, busqueda)
     }
 
-    fun filtrar(citas: List<Cita>, filtro: FiltroEstado, busqueda: String): List<Cita> {
+    fun filtrar(
+        citas: List<Cita>,
+        filtro: FiltroEstado,
+        busqueda: String,
+        soloHoy: Boolean = false
+    ): List<Cita> {
         val texto = busqueda.normalizarBusqueda()
+        val hoy = reloj.ahora().toLocalDateTime(reloj.zona).date
         return citas.filter { cita ->
             val coincideEstado = when (filtro) {
                 FiltroEstado.TODAS -> true
@@ -36,8 +46,12 @@ class ObtenerCitasUseCase(private val repository: CitaRepository) {
                 FiltroEstado.ATENDIDA -> cita.estado is EstadoCita.Atendida
                 FiltroEstado.CANCELADA -> cita.estado is EstadoCita.Cancelada
             }
-            coincideEstado && (texto in cita.medico.nombre.normalizarBusqueda() ||
-                texto in cita.medico.especialidad.nombre.normalizarBusqueda())
+
+            val coincideHoy = !soloHoy || cita.fechaHora.date == hoy
+            coincideEstado &&
+                    coincideHoy &&
+                    (texto in cita.medico.nombre.normalizarBusqueda() ||
+                            texto in cita.medico.especialidad.nombre.normalizarBusqueda())
         }.sortedBy { it.fechaHora }
     }
 }

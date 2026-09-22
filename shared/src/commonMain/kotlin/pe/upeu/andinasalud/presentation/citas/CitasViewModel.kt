@@ -42,9 +42,20 @@ class CitasViewModel(private val obtener: ObtenerCitasUseCase) : ViewModel() {
         if (_uiState.value.resultado !is UiState.Cargando && _uiState.value.resultado !is UiState.Error) aplicarFiltros()
     }
 
+
+    fun filtrarHoy(activo: Boolean) {
+        _uiState.update { it.copy(soloHoy = activo) }
+
+        if (_uiState.value.resultado !is UiState.Cargando &&
+            _uiState.value.resultado !is UiState.Error
+        ) {
+            aplicarFiltros()
+        }
+    }
+
     private fun aplicarFiltros() {
         val estado = _uiState.value
-        val visibles = obtener.filtrar(todas, estado.filtro, estado.busqueda)
+        val visibles = obtener.filtrar(todas, estado.filtro, estado.busqueda, estado.soloHoy)
         _uiState.update { it.copy(resultado = if (visibles.isEmpty()) UiState.Vacio else UiState.Contenido(visibles)) }
     }
 }
