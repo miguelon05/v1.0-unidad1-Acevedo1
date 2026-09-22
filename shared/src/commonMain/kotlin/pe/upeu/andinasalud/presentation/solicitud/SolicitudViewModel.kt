@@ -32,6 +32,7 @@ class SolicitudViewModel(obtener: ObtenerCatalogoUseCase, private val solicitar:
                 CampoSolicitud.FECHA -> it.solicitud.copy(fecha = valor)
                 CampoSolicitud.HORA -> it.solicitud.copy(hora = valor)
                 CampoSolicitud.MOTIVO -> it.solicitud.copy(motivo = valor)
+                CampoSolicitud.MODALIDAD -> it.solicitud.copy(modalidad = Modalidad.valueOf(valor))
             }
             it.copy(solicitud = solicitud, errores = it.errores - campo, mensaje = "")
         }

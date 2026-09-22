@@ -30,6 +30,17 @@ fun SolicitudScreen(estado: UiState<Catalogo>, formulario: FormularioUiState, ed
                     formulario.errores[CampoSolicitud.SEDE], !formulario.enviando) { editar(CampoSolicitud.SEDE, it) }
             }
             item {
+                Selector(
+                    "Modalidad", 
+                    Modalidad.entries.map { it.name to it.name }, 
+                    solicitud.modalidad.name,
+                    null, 
+                    !formulario.enviando
+                ) { modalStr ->
+                    editar(CampoSolicitud.MODALIDAD, modalStr)
+                }
+            }
+            item {
                 Campo("Fecha (AAAA-MM-DD)", solicitud.fecha, formulario.errores[CampoSolicitud.FECHA], !formulario.enviando,
                     "Ejemplo: 2026-10-15") { editar(CampoSolicitud.FECHA, it) }
             }
