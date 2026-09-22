@@ -8,4 +8,5 @@ data class CitasUiState(
     val resultado: UiState<List<Cita>> = UiState.Cargando,
     val busqueda: String = "",
     val filtro: FiltroEstado = FiltroEstado.TODAS,
+    val soloHoy: Boolean = false,
 )

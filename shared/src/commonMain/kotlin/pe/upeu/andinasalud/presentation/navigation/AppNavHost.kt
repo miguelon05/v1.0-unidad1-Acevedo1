@@ -82,8 +82,15 @@ fun AppNavHost(oscuro: Boolean, cambiarTema: (Boolean) -> Unit) {
                 composable(Destinos.CITAS) {
                     val vm: CitasViewModel = koinViewModel()
                     val estado by vm.uiState.collectAsStateWithLifecycle()
-                    CitasScreen(estado, vm::buscar, vm::filtrar, vm::recargar,
-                        { nav.navigate(Destinos.detalle(it)) }, { nav.navigate(Destinos.SOLICITUD) })
+                    CitasScreen(
+                        estado = estado, 
+                        buscar = vm::buscar, 
+                        filtrar = vm::filtrar, 
+                        filtrarHoy = vm::filtrarHoy,
+                        reintentar = vm::recargar,
+                        detalle = { nav.navigate(Destinos.detalle(it)) }, 
+                        solicitar = { nav.navigate(Destinos.SOLICITUD) }
+                    )
                 }
                 composable(Destinos.PERFIL) {
                     val vm: PerfilViewModel = koinViewModel()
