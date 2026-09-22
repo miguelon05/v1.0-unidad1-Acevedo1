@@ -8,6 +8,7 @@ data class SolicitudCita(
     val fecha: String = "",
     val hora: String = "",
     val motivo: String = "",
+    val modalidad: Modalidad = Modalidad.PRESENCIAL
 )
 
 enum class CampoSolicitud { ESPECIALIDAD, SEDE, FECHA, HORA, MOTIVO }

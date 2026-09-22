@@ -30,6 +30,7 @@ class SolicitarCitaUseCase(
             fechaHora = LocalDateTime.parse("${solicitud.fecha}T${solicitud.hora}"),
             motivo = solicitud.motivo.trim(), indicaciones = "Llega 15 minutos antes y trae tu documento de identidad.",
             estado = EstadoCita.Programada(recordatorioActivo = true),
+            modalidad = solicitud.modalidad
         )
         repository.guardar(cita)
         ResultadoOperacion.Exito(cita)
