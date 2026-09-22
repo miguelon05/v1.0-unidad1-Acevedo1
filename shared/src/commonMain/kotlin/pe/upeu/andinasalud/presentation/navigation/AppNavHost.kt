@@ -35,6 +35,9 @@ private val principales = listOf(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavHost(oscuro: Boolean, cambiarTema: (Boolean) -> Unit) {
+    val navViewModel: AppViewModel = koinViewModel()
+    val navState by navViewModel.uiState.collectAsStateWithLifecycle()
+    
     val nav = rememberNavController()
     val entrada by nav.currentBackStackEntryAsState()
     val ruta = entrada?.destination?.route ?: Destinos.INICIO
@@ -65,8 +68,20 @@ fun AppNavHost(oscuro: Boolean, cambiarTema: (Boolean) -> Unit) {
         bottomBar = {
             if (esPrincipal) NavigationBar {
                 principales.forEach { destino ->
-                    NavigationBarItem(selected = ruta == destino.ruta, onClick = { principal(destino.ruta) },
-                        icon = { Icon(destino.icono, null) }, label = { Text(destino.titulo) })
+                    NavigationBarItem(
+                        selected = ruta == destino.ruta,
+                        onClick = { principal(destino.ruta) },
+                        icon = {
+                            if (destino.ruta == Destinos.CITAS && navState.programadas > 0) {
+                                BadgedBox(badge = { Badge { Text(navState.programadas.toString()) } }) {
+                                    Icon(destino.icono, null)
+                                }
+                            } else {
+                                Icon(destino.icono, null)
+                            }
+                        },
+                        label = { Text(destino.titulo) }
+                    )
                 }
             }
         },
@@ -76,14 +91,27 @@ fun AppNavHost(oscuro: Boolean, cambiarTema: (Boolean) -> Unit) {
                 composable(Destinos.INICIO) {
                     val vm: InicioViewModel = koinViewModel()
                     val estado by vm.uiState.collectAsStateWithLifecycle()
-                    InicioScreen(estado, vm::recargar, { principal(Destinos.CITAS) },
-                        { nav.navigate(Destinos.SOLICITUD) }, { nav.navigate(Destinos.detalle(it)) })
+                    InicioScreen(
+                        estado = estado, 
+                        reintentar = vm::recargar, 
+                        verCitas = { principal(Destinos.CITAS) },
+                        solicitar = { nav.navigate(Destinos.SOLICITUD) }, 
+                        detalle = { nav.navigate(Destinos.detalle(it)) },
+                        limiteAlcanzado = navState.limiteAlcanzado
+                    )
                 }
                 composable(Destinos.CITAS) {
                     val vm: CitasViewModel = koinViewModel()
                     val estado by vm.uiState.collectAsStateWithLifecycle()
-                    CitasScreen(estado, vm::buscar, vm::filtrar, vm::recargar,
-                        { nav.navigate(Destinos.detalle(it)) }, { nav.navigate(Destinos.SOLICITUD) })
+                    CitasScreen(
+                        estado = estado, 
+                        buscar = vm::buscar, 
+                        filtrar = vm::filtrar, 
+                        reintentar = vm::recargar,
+                        detalle = { nav.navigate(Destinos.detalle(it)) }, 
+                        solicitar = { nav.navigate(Destinos.SOLICITUD) },
+                        limiteAlcanzado = navState.limiteAlcanzado
+                    )
                 }
                 composable(Destinos.PERFIL) {
                     val vm: PerfilViewModel = koinViewModel()
