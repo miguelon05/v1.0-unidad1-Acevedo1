@@ -83,7 +83,14 @@ fun CitaCard(cita: Cita, abrir: () -> Unit, destacada: Boolean = false) {
     Card(onClick = abrir, modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = if (destacada) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerLow)) {
         Column(Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            EtiquetaEstado(cita.estado)
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                EtiquetaEstado(cita.estado)
+                Text(
+                    text = cita.modalidad.name,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
             Text(cita.medico.especialidad.nombre, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.SemiBold)
             Text(cita.medico.nombre, style = MaterialTheme.typography.bodyLarge)
             HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)

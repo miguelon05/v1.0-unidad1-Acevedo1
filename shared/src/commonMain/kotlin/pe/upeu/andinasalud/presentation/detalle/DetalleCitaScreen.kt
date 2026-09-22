@@ -21,6 +21,7 @@ fun DetalleCitaScreen(estado: UiState<DetalleDatos>, accion: CancelacionUiState,
             item { Text(cita.medico.especialidad.nombre, style = MaterialTheme.typography.headlineMedium) }
             item { Dato("Profesional", cita.medico.nombre) }
             item { Dato("Sede", cita.sede.nombre) }
+            item { Dato("Modalidad", cita.modalidad.name) }
             item { Dato("Fecha y hora", "${cita.fechaHora.fechaVisible()} · ${cita.fechaHora.time}") }
             item { HorizontalDivider() }
             item { Dato("Motivo de consulta", cita.motivo) }
