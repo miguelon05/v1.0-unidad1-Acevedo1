@@ -92,7 +92,7 @@ fun AppNavHost(oscuro: Boolean, cambiarTema: (Boolean) -> Unit) {
                 }
                 composable(Destinos.AJUSTES) { AjustesScreen(oscuro, cambiarTema) }
                 composable(Destinos.DETALLE, arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->
-                    val id = entry.arguments?.getString("id").orEmpty()
+                    val id = entry.arguments?.let { NavType.StringType.get(it, "id") } ?: ""
                     val vm: DetalleCitaViewModel = koinViewModel(parameters = { parametersOf(id) })
                     val estado by vm.uiState.collectAsStateWithLifecycle()
                     val accion by vm.cancelacion.collectAsStateWithLifecycle()
